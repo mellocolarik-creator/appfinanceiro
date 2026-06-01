@@ -45,10 +45,14 @@ Acesse: http://localhost:3000
 
 ## 6. Deploy na Vercel
 
-1. Push do repositório para o GitHub
-2. Importe o projeto na Vercel
-3. Configure as variáveis de ambiente (`NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-4. Deploy automático
+1. Acesse [vercel.com/new](https://vercel.com/new) e importe o repositório do GitHub
+2. **Importante:** Deixe o "Root Directory" vazio (o `vercel.json` na raiz do repo já configura os comandos corretamente)
+3. Em **Environment Variables**, adicione:
+   - `NEXT_PUBLIC_SUPABASE_URL` → URL do seu projeto Supabase
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` → chave anônima do Supabase
+4. Clique em **Deploy**
+
+> As variáveis `NEXT_PUBLIC_*` são seguras para o frontend: a chave anônima do Supabase é projetada para uso no browser, e o acesso aos dados é controlado pelo Row Level Security (RLS) no Supabase.
 
 ## Estrutura de pastas
 
