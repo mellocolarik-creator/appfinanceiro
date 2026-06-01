@@ -1,6 +1,0 @@
-{
-  "buildCommand": "cd appfinancas && npm run build",
-  "installCommand": "cd appfinancas && npm install",
-  "outputDirectory": "appfinancas/.next",
-  "framework": "nextjs"
-}
