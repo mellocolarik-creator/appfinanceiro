@@ -43,7 +43,9 @@ export function useTransactions(filters: TransactionFilters) {
 
   async function createTransaction(data: TransactionFormData) {
     const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
     const { error } = await supabase.from('transactions').insert({
+      user_id: user!.id,
       description: data.description,
       amount: parseFloat(data.amount),
       date: data.date,

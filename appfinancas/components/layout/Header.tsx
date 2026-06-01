@@ -1,9 +1,10 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { LogOut, BarChart2, LayoutDashboard, ArrowLeftRight } from 'lucide-react'
+import { LogOut, BarChart2, LayoutDashboard, ArrowLeftRight, Sun, Moon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -28,6 +29,7 @@ interface HeaderProps {
 export function Header({ email }: HeaderProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const { theme, setTheme } = useTheme()
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -70,6 +72,15 @@ export function Header({ email }: HeaderProps) {
       </nav>
 
       <div className="ml-auto flex items-center gap-2">
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="h-9 w-9 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          aria-label="Alternar tema"
+        >
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
+        </button>
+
         <DropdownMenu>
           <DropdownMenuTrigger
             className="relative h-9 w-9 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
