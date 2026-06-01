@@ -107,7 +107,7 @@ export function useTransactions(filters: TransactionFilters) {
         type: data.type,
         category: data.category,
         payment_method: data.payment_method,
-        installments: data.payment_method === 'parcelas' ? Math.max(2, parseInt(data.installments) || 2) : 1,
+        installments: data.payment_method === 'crédito' ? Math.max(1, parseInt(data.installments) || 1) : 1,
       })
       .eq('id', id)
     if (!error) fetchTransactions()
