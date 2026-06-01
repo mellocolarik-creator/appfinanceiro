@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Transaction } from '@/types'
+import { Transaction, PAYMENT_METHODS } from '@/types'
 import { cn } from '@/lib/utils'
 
 function formatCurrency(value: number) {
@@ -82,10 +82,17 @@ export function TransactionList({ transactions, loading, onEdit, onDelete }: Tra
             {/* Info */}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{t.description}</p>
-              <div className="flex items-center gap-2 mt-0.5">
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                 <Badge variant="secondary" className="text-xs font-normal h-5">
                   {t.category}
                 </Badge>
+                {t.payment_method && t.payment_method !== 'dinheiro' && (
+                  <Badge variant="outline" className="text-xs font-normal h-5">
+                    {t.payment_method === 'parcelas' && t.installments && t.installments > 1
+                      ? `${t.installments}x ${PAYMENT_METHODS.find((m) => m.value === t.payment_method)?.label ?? t.payment_method}`
+                      : PAYMENT_METHODS.find((m) => m.value === t.payment_method)?.label ?? t.payment_method}
+                  </Badge>
+                )}
                 <span className="text-xs text-muted-foreground">
                   {format(new Date(t.date + 'T00:00:00'), "d 'de' MMMM", { locale: ptBR })}
                 </span>

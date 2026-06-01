@@ -12,7 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { TransactionFilters as Filters, CATEGORIES, Category } from '@/types'
+import { TransactionFilters as Filters, CATEGORIES } from '@/types'
+import { useCategories } from '@/hooks/useCategories'
 
 interface TransactionFiltersProps {
   filters: Filters
@@ -20,6 +21,8 @@ interface TransactionFiltersProps {
 }
 
 export function TransactionFilters({ filters, onChange }: TransactionFiltersProps) {
+  const { categories: userCategories } = useCategories()
+
   function set<K extends keyof Filters>(key: K, value: Filters[K]) {
     onChange({ ...filters, [key]: value })
   }
@@ -52,16 +55,17 @@ export function TransactionFilters({ filters, onChange }: TransactionFiltersProp
       </div>
 
       {/* Category */}
-      <Select value={filters.category} onValueChange={(v) => set('category', v as Category | 'all')}>
+      <Select value={filters.category} onValueChange={(v) => v && set('category', v)}>
         <SelectTrigger className="w-40 h-9">
           <SelectValue placeholder="Categoria" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todas as categorias</SelectItem>
           {CATEGORIES.map((c) => (
-            <SelectItem key={c} value={c}>
-              {c}
-            </SelectItem>
+            <SelectItem key={c} value={c}>{c}</SelectItem>
+          ))}
+          {userCategories.map((c) => (
+            <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>

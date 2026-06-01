@@ -51,6 +51,8 @@ export function useTransactions(filters: TransactionFilters) {
       date: data.date,
       type: data.type,
       category: data.category,
+      payment_method: data.payment_method,
+      installments: data.payment_method === 'parcelas' ? parseInt(data.installments) || 2 : 1,
     })
     if (!error) fetchTransactions()
     return { error }
@@ -66,6 +68,8 @@ export function useTransactions(filters: TransactionFilters) {
         date: data.date,
         type: data.type,
         category: data.category,
+        payment_method: data.payment_method,
+        installments: data.payment_method === 'parcelas' ? parseInt(data.installments) || 2 : 1,
       })
       .eq('id', id)
     if (!error) fetchTransactions()

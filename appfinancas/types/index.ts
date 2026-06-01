@@ -1,17 +1,18 @@
 export type TransactionType = 'income' | 'expense'
 
-export type Category =
-  | 'Alimentação'
-  | 'Transporte'
-  | 'Moradia'
-  | 'Lazer'
-  | 'Saúde'
-  | 'Educação'
-  | 'Salário'
-  | 'Freelance'
-  | 'Outros'
+export type Category = string
 
-export const CATEGORIES: Category[] = [
+export const DEFAULT_INCOME_CATEGORIES: string[] = ['Salário', 'Freelance', 'Outros']
+export const DEFAULT_EXPENSE_CATEGORIES: string[] = [
+  'Alimentação',
+  'Transporte',
+  'Moradia',
+  'Lazer',
+  'Saúde',
+  'Educação',
+  'Outros',
+]
+export const CATEGORIES: string[] = [
   'Alimentação',
   'Transporte',
   'Moradia',
@@ -22,19 +23,10 @@ export const CATEGORIES: Category[] = [
   'Freelance',
   'Outros',
 ]
+export const INCOME_CATEGORIES: string[] = DEFAULT_INCOME_CATEGORIES
+export const EXPENSE_CATEGORIES: string[] = DEFAULT_EXPENSE_CATEGORIES
 
-export const INCOME_CATEGORIES: Category[] = ['Salário', 'Freelance', 'Outros']
-export const EXPENSE_CATEGORIES: Category[] = [
-  'Alimentação',
-  'Transporte',
-  'Moradia',
-  'Lazer',
-  'Saúde',
-  'Educação',
-  'Outros',
-]
-
-export const CATEGORY_COLORS: Record<Category, string> = {
+export const CATEGORY_COLORS: Record<string, string> = {
   Alimentação: '#f97316',
   Transporte: '#3b82f6',
   Moradia: '#8b5cf6',
@@ -46,6 +38,18 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   Outros: '#94a3b8',
 }
 
+export const CATEGORY_COLOR_FALLBACK = '#94a3b8'
+
+export type PaymentMethod = 'dinheiro' | 'pix' | 'débito' | 'crédito' | 'parcelas'
+
+export const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
+  { value: 'dinheiro', label: 'Dinheiro' },
+  { value: 'pix', label: 'PIX' },
+  { value: 'débito', label: 'Cartão de Débito' },
+  { value: 'crédito', label: 'Cartão de Crédito' },
+  { value: 'parcelas', label: 'Parcelas' },
+]
+
 export interface Transaction {
   id: string
   user_id: string
@@ -53,7 +57,9 @@ export interface Transaction {
   amount: number
   date: string
   type: TransactionType
-  category: Category
+  category: string
+  payment_method?: PaymentMethod
+  installments?: number
   created_at: string
 }
 
@@ -62,13 +68,15 @@ export interface TransactionFormData {
   amount: string
   date: string
   type: TransactionType
-  category: Category
+  category: string
+  payment_method: PaymentMethod
+  installments: string
 }
 
 export interface TransactionFilters {
   month: number
   year: number
-  category: Category | 'all'
+  category: string
   search: string
 }
 
@@ -79,7 +87,14 @@ export interface MonthlySummary {
 }
 
 export interface CategoryData {
-  name: Category
+  name: string
   value: number
   color: string
+}
+
+export interface UserCategory {
+  id: string
+  user_id: string
+  name: string
+  created_at: string
 }

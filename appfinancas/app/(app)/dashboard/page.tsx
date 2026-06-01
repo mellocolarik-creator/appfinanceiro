@@ -9,7 +9,7 @@ import { SummaryCards } from '@/components/dashboard/SummaryCards'
 import { CategoryPieChart } from '@/components/dashboard/CategoryPieChart'
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions'
 import { useTransactions } from '@/hooks/useTransactions'
-import { CATEGORY_COLORS, Category, CategoryData, MonthlySummary } from '@/types'
+import { CATEGORY_COLORS, CATEGORY_COLOR_FALLBACK, CategoryData, MonthlySummary } from '@/types'
 
 export default function DashboardPage() {
   const now = new Date()
@@ -40,26 +40,26 @@ export default function DashboardPage() {
   }, [transactions])
 
   const expenseByCategory: CategoryData[] = useMemo(() => {
-    const map = new Map<Category, number>()
+    const map = new Map<string, number>()
     transactions.filter((t) => t.type === 'expense').forEach((t) => {
       map.set(t.category, (map.get(t.category) ?? 0) + t.amount)
     })
     return Array.from(map.entries()).map(([name, value]) => ({
       name,
       value,
-      color: CATEGORY_COLORS[name],
+      color: CATEGORY_COLORS[name] ?? CATEGORY_COLOR_FALLBACK,
     }))
   }, [transactions])
 
   const incomeByCategory: CategoryData[] = useMemo(() => {
-    const map = new Map<Category, number>()
+    const map = new Map<string, number>()
     transactions.filter((t) => t.type === 'income').forEach((t) => {
       map.set(t.category, (map.get(t.category) ?? 0) + t.amount)
     })
     return Array.from(map.entries()).map(([name, value]) => ({
       name,
       value,
-      color: CATEGORY_COLORS[name],
+      color: CATEGORY_COLORS[name] ?? CATEGORY_COLOR_FALLBACK,
     }))
   }, [transactions])
 
