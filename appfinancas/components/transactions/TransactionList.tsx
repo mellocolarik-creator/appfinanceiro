@@ -88,7 +88,7 @@ export function TransactionList({ transactions, loading, onEdit, onDelete }: Tra
                 </Badge>
                 {t.payment_method && t.payment_method !== 'dinheiro' && (
                   <Badge variant="outline" className="text-xs font-normal h-5">
-                    {t.payment_method === 'parcelas' && t.installments && t.installments > 1
+                    {t.installments && t.installments > 1
                       ? `${t.installments}x ${PAYMENT_METHODS.find((m) => m.value === t.payment_method)?.label ?? t.payment_method}`
                       : PAYMENT_METHODS.find((m) => m.value === t.payment_method)?.label ?? t.payment_method}
                   </Badge>
