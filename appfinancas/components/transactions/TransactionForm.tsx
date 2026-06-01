@@ -300,20 +300,26 @@ export function TransactionForm({ open, onOpenChange, transaction, onSubmit }: T
           {/* Payment method */}
           <div className="space-y-1.5">
             <Label>Forma de pagamento</Label>
-            <Select value={form.payment_method} onValueChange={(v) => v && set('payment_method', v as PaymentMethod)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PAYMENT_METHODS.map((m) => (
-                  <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-2">
+              {PAYMENT_METHODS.map((m) => (
+                <button
+                  key={m.value}
+                  type="button"
+                  onClick={() => set('payment_method', m.value)}
+                  className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
+                    form.payment_method === m.value
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border text-muted-foreground hover:bg-accent'
+                  }`}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Installments (only for parcelas) */}
-          {form.payment_method === 'parcelas' && (
+          {/* Installments (only for credit card) */}
+          {form.payment_method === 'crédito' && (
             <div className="space-y-1.5">
               <Label htmlFor="installments">Número de parcelas</Label>
               <Input

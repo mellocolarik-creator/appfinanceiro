@@ -53,7 +53,10 @@ export default function TransactionsPage() {
     } else {
       const result = await createTransaction(data)
       if (!result.error) toast.success('Transação adicionada!')
-      else toast.error('Erro ao adicionar transação.')
+      else {
+        const msg = (result.error as { message?: string })?.message ?? String(result.error)
+        toast.error(`Erro: ${msg}`)
+      }
       return result
     }
   }

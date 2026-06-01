@@ -40,14 +40,13 @@ export const CATEGORY_COLORS: Record<string, string> = {
 
 export const CATEGORY_COLOR_FALLBACK = '#94a3b8'
 
-export type PaymentMethod = 'dinheiro' | 'pix' | 'débito' | 'crédito' | 'parcelas'
+export type PaymentMethod = 'dinheiro' | 'pix' | 'débito' | 'crédito'
 
 export const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
   { value: 'dinheiro', label: 'Dinheiro' },
   { value: 'pix', label: 'PIX' },
   { value: 'débito', label: 'Cartão de Débito' },
   { value: 'crédito', label: 'Cartão de Crédito' },
-  { value: 'parcelas', label: 'Parcelas' },
 ]
 
 export interface Transaction {

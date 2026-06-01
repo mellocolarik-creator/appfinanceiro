@@ -52,11 +52,11 @@ export function useTransactions(filters: TransactionFilters) {
     const { data: { user } } = await supabase.auth.getUser()
 
     const totalAmount = parseFloat(data.amount)
-    const installmentCount = data.payment_method === 'parcelas'
-      ? Math.max(2, parseInt(data.installments) || 2)
+    const installmentCount = data.payment_method === 'crédito'
+      ? Math.max(1, parseInt(data.installments) || 1)
       : 1
 
-    if (data.payment_method === 'parcelas' && installmentCount > 1) {
+    if (data.payment_method === 'crédito' && installmentCount > 1) {
       // Create one transaction per installment, distributed across months
       const amountPerInstallment = Math.round((totalAmount / installmentCount) * 100) / 100
       const startDate = new Date(data.date + 'T12:00:00')
