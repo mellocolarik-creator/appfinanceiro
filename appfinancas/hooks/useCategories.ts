@@ -9,13 +9,18 @@ export function useCategories() {
   const [loading, setLoading] = useState(true)
 
   const fetchCategories = useCallback(async () => {
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('user_categories')
-      .select('*')
-      .order('name')
-    if (data) setCategories(data as UserCategory[])
-    setLoading(false)
+    try {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('user_categories')
+        .select('*')
+        .order('name')
+      if (!error && data) setCategories(data as UserCategory[])
+    } catch {
+      // silently ignore if table doesn't exist yet
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {

@@ -7,9 +7,11 @@ import { Transaction, TransactionFormData, TransactionFilters } from '@/types'
 export function useTransactions(filters: TransactionFilters) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchTransactions = useCallback(async () => {
     setLoading(true)
+    setError(null)
     const supabase = createClient()
 
     let query = supabase
@@ -32,8 +34,12 @@ export function useTransactions(filters: TransactionFilters) {
       query = query.ilike('description', `%${filters.search.trim()}%`)
     }
 
-    const { data, error } = await query
-    if (!error && data) setTransactions(data as Transaction[])
+    const { data, error: fetchError } = await query
+    if (fetchError) {
+      setError(fetchError.message)
+    } else if (data) {
+      setTransactions(data as Transaction[])
+    }
     setLoading(false)
   }, [filters])
 
@@ -44,15 +50,47 @@ export function useTransactions(filters: TransactionFilters) {
   async function createTransaction(data: TransactionFormData) {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
+
+    const totalAmount = parseFloat(data.amount)
+    const installmentCount = data.payment_method === 'parcelas'
+      ? Math.max(2, parseInt(data.installments) || 2)
+      : 1
+
+    if (data.payment_method === 'parcelas' && installmentCount > 1) {
+      // Create one transaction per installment, distributed across months
+      const amountPerInstallment = Math.round((totalAmount / installmentCount) * 100) / 100
+      const startDate = new Date(data.date + 'T12:00:00')
+
+      const inserts = Array.from({ length: installmentCount }, (_, i) => {
+        const d = new Date(startDate)
+        d.setMonth(d.getMonth() + i)
+        return {
+          user_id: user!.id,
+          description: `${data.description} (${i + 1}/${installmentCount})`,
+          amount: amountPerInstallment,
+          date: d.toISOString().split('T')[0],
+          type: data.type,
+          category: data.category,
+          payment_method: data.payment_method,
+          installments: installmentCount,
+        }
+      })
+
+      const { error } = await supabase.from('transactions').insert(inserts)
+      if (!error) fetchTransactions()
+      return { error }
+    }
+
+    // Single transaction (non-parcelas)
     const { error } = await supabase.from('transactions').insert({
       user_id: user!.id,
       description: data.description,
-      amount: parseFloat(data.amount),
+      amount: totalAmount,
       date: data.date,
       type: data.type,
       category: data.category,
       payment_method: data.payment_method,
-      installments: data.payment_method === 'parcelas' ? parseInt(data.installments) || 2 : 1,
+      installments: 1,
     })
     if (!error) fetchTransactions()
     return { error }
@@ -69,7 +107,7 @@ export function useTransactions(filters: TransactionFilters) {
         type: data.type,
         category: data.category,
         payment_method: data.payment_method,
-        installments: data.payment_method === 'parcelas' ? parseInt(data.installments) || 2 : 1,
+        installments: data.payment_method === 'parcelas' ? Math.max(2, parseInt(data.installments) || 2) : 1,
       })
       .eq('id', id)
     if (!error) fetchTransactions()
@@ -83,5 +121,5 @@ export function useTransactions(filters: TransactionFilters) {
     return { error }
   }
 
-  return { transactions, loading, createTransaction, updateTransaction, deleteTransaction, refetch: fetchTransactions }
+  return { transactions, loading, error, createTransaction, updateTransaction, deleteTransaction, refetch: fetchTransactions }
 }

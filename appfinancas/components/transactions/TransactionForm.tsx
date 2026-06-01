@@ -300,7 +300,7 @@ export function TransactionForm({ open, onOpenChange, transaction, onSubmit }: T
           {/* Payment method */}
           <div className="space-y-1.5">
             <Label>Forma de pagamento</Label>
-            <Select value={form.payment_method} onValueChange={(v) => set('payment_method', v as PaymentMethod)}>
+            <Select value={form.payment_method} onValueChange={(v) => v && set('payment_method', v as PaymentMethod)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -321,9 +321,21 @@ export function TransactionForm({ open, onOpenChange, transaction, onSubmit }: T
                 type="number"
                 min="2"
                 max="48"
+                placeholder="Ex: 12"
                 value={form.installments}
                 onChange={(e) => set('installments', e.target.value)}
               />
+              {form.amount && parseInt(form.installments) >= 2 && (
+                <p className="text-xs text-muted-foreground">
+                  {parseInt(form.installments)}x de{' '}
+                  <span className="font-medium text-foreground">
+                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                      parseFloat(form.amount) / parseInt(form.installments)
+                    )}
+                  </span>
+                  {' '}— cada parcela será lançada automaticamente no mês correspondente
+                </p>
+              )}
             </div>
           )}
 

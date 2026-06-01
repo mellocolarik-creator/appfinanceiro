@@ -22,7 +22,7 @@ export default function TransactionsPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Transaction | null>(null)
 
-  const { transactions, loading, createTransaction, updateTransaction, deleteTransaction } =
+  const { transactions, loading, error, createTransaction, updateTransaction, deleteTransaction } =
     useTransactions(filters)
 
   const totalIncome = useMemo(
@@ -89,6 +89,13 @@ export default function TransactionsPage() {
 
       {/* Filters */}
       <TransactionFilters filters={filters} onChange={setFilters} />
+
+      {/* Error state */}
+      {error && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          Erro ao carregar transações: {error}
+        </div>
+      )}
 
       {/* Summary bar */}
       {!loading && transactions.length > 0 && (
